@@ -1,40 +1,43 @@
 # FinAlly — AI Trading Workstation
 
-A visually stunning AI-powered trading workstation that streams live market data, simulates portfolio trading, and integrates an LLM chat assistant that can analyze positions and execute trades via natural language.
+AI-powered trading workstation with live market data, simulated portfolio trading, and an LLM chat assistant that analyzes positions and executes trades via natural language. Built entirely by coding agents as a capstone for an agentic AI coding course.
 
-Built entirely by coding agents as a capstone project for an agentic AI coding course.
+## Status
 
-## Features
+**In progress.** Market data backend is complete (simulator + real data). Remaining: database, API routes, frontend, AI chat, Docker packaging.
 
-- **Live price streaming** via SSE with green/red flash animations
-- **Simulated portfolio** — $10k virtual cash, market orders, instant fills
-- **Portfolio visualizations** — heatmap (treemap), P&L chart, positions table
-- **AI chat assistant** — analyzes holdings, suggests and auto-executes trades
-- **Watchlist management** — track tickers manually or via AI
-- **Dark terminal aesthetic** — Bloomberg-inspired, data-dense layout
+## What's Built
+
+- **Market data subsystem** (`backend/app/market/`) — GBM simulator with correlated sector moves, Massive/Polygon.io REST client, unified interface via strategy pattern, thread-safe price cache, SSE streaming endpoint. 73 tests passing, 84% coverage.
+
+## Planned Features
+
+- Live price streaming with green/red flash animations
+- $10k simulated portfolio with market orders
+- Portfolio heatmap, P&L chart, positions table
+- AI chat assistant that auto-executes trades
+- Watchlist management (manual + via AI)
+- Bloomberg-inspired dark terminal UI
 
 ## Architecture
 
-Single Docker container serving everything on port 8000:
+Single Docker container on port 8000:
 
-- **Frontend**: Next.js (static export) with TypeScript and Tailwind CSS
-- **Backend**: FastAPI (Python/uv) with SSE streaming
-- **Database**: SQLite with lazy initialization
-- **AI**: LiteLLM → OpenRouter (Cerebras inference) with structured outputs
-- **Market data**: Built-in GBM simulator (default) or Massive API (optional)
+- **Frontend**: Next.js (static export), TypeScript, Tailwind CSS
+- **Backend**: FastAPI (Python/uv), SSE streaming, SQLite
+- **AI**: LiteLLM → OpenRouter (Cerebras inference), structured outputs
+- **Market data**: GBM simulator (default) or Massive API (optional)
 
-## Quick Start
+## Project Structure
 
-```bash
-# Clone and configure
-cp .env.example .env
-# Add your OPENROUTER_API_KEY to .env
-
-# Run with Docker
-docker build -t finally .
-docker run -v finally-data:/app/db -p 8000:8000 --env-file .env finally
-
-# Open http://localhost:8000
+```
+finally/
+├── backend/     # FastAPI uv project (market data complete)
+├── planning/    # Project docs and agent contracts
+├── frontend/    # Next.js static export (not yet created)
+├── test/        # Playwright E2E tests (not yet created)
+├── db/          # SQLite volume mount (runtime)
+└── scripts/     # Start/stop helpers (not yet created)
 ```
 
 ## Environment Variables
@@ -42,20 +45,8 @@ docker run -v finally-data:/app/db -p 8000:8000 --env-file .env finally
 | Variable | Required | Description |
 |---|---|---|
 | `OPENROUTER_API_KEY` | Yes | OpenRouter API key for AI chat |
-| `MASSIVE_API_KEY` | No | Massive (Polygon.io) key for real market data; omit to use simulator |
-| `LLM_MOCK` | No | Set `true` for deterministic mock LLM responses (testing) |
-
-## Project Structure
-
-```
-finally/
-├── frontend/    # Next.js static export
-├── backend/     # FastAPI uv project
-├── planning/    # Project documentation and agent contracts
-├── test/        # Playwright E2E tests
-├── db/          # SQLite volume mount (runtime)
-└── scripts/     # Start/stop helpers
-```
+| `MASSIVE_API_KEY` | No | Massive (Polygon.io) key for real data; omit for simulator |
+| `LLM_MOCK` | No | `true` for deterministic mock LLM responses (testing) |
 
 ## License
 
